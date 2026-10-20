@@ -6,13 +6,13 @@
 Retailers operating multi-branch supermarkets, hypermarkets, and department stores across East Africa process thousands of daily checkouts across **4 distinct tender streams**:
 1. **Cash Till & CIT Physical Vault Drops** (G4S / Wells Fargo smart-safe bags)
 2. **Safaricom M-Pesa BuyGoods / Paybill Till CSVs** (Daraja C2B API settlement)
-3. **Visa / Mastercard Acquirer PDQ Batches** (KCB, Equity, Absa, Co-op PDQ settlement)
+3. **Visa / Mastercard Card PDQ Batches** (KCB, Equity, Absa, Co-op PDQ settlement)
 4. **Corporate Gift & EFT Vouchers**
 
-`Retail_POSSettlementReconAgent` (`#07`) automates the **4-Way Tender Reconciliation & Fee Audit** between the Store POS Z-Report, Payment Provider Settlement Statement, Contracted Fee Schedule (`1.50%` Card MDR & `0.50%` M-Pesa Till tariff), and Actual Net Bank Credit.
+`Retail_POSSettlementReconAgent` (`#07`) automates the **4-Way Store Tender Match & Bank Commission Audit** between the Store POS Z-Report, Payment Provider Settlement Statement, Agreed Bank Commission Schedule (`1.50%` Agreed Bank Card Commission & `0.50%` M-Pesa Till tariff), and Actual Net Bank Credit.
 
 ## Key Capabilities
-- **Acquirer MDR Fee Overcharge Audit**: Detects when an acquirer bank deducts a `2.15%` standard merchant discount rate instead of the contracted `1.50%` volume tier, automatically computing the exact KES Debit Note claim.
+- **Bank Card Commission Overcharge Audit**: Detects when an acquiring bank deducts a `2.15%` standard commission rate instead of the agreed `1.50%` volume rate, automatically computing the exact KES Bank Card Commission Overcharge Claim Debit Note (`GL 131200`).
 - **T+1 Card Batch Cutoff Timing Isolation**: Separates late-night PDQ swipes after `23:45 EAT` that appear on the POS Z-Report but roll into the next day's bank sweep (`GL 102350`).
 - **Duplicate M-Pesa Reversal Ghost Detection**: Flags Safaricom Daraja C2B reversals triggered after goods release so Treasury can file immediate clawback disputes (`GL 131300`).
 - **Cashier Till Float Shortage Pinpointing**: Compares physical CIT vault drop counts against POS Z-Report cash totals and books shortages to Staff Till Shortage Receivable (`GL 131400`).

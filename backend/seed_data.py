@@ -18,7 +18,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
         "signoff_by": None,
         "signoff_timestamp": None,
         "erp_journal_ref": None,
-        "notes": "Acquirer deducted 2.15% MDR instead of contracted 1.50% on Visa/MC batch; T+1 cutoff on 2 late night PDQ swipes; Till #04 cash shortage KES 4,200.",
+        "notes": "Acquiring bank deducted 2.15% Bank Card Commission instead of agreed 1.50% rate on Visa/MC batch; T+1 cutoff on 2 late night PDQ swipes; Till #04 cash shortage KES 4,200.",
         "tenders": [
             {
                 "tender_type": "CASH_TILL",
@@ -26,6 +26,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
                 "pos_z_report_gross": 1845000.00,
                 "provider_settlement_gross": 1840800.00,
                 "contracted_fee_pct": 0.00,
+                "actual_fee_pct": 0.00,
                 "expected_fee_kes": 0.00,
                 "actual_fee_deducted_kes": 0.00,
                 "expected_net_bank_credit": 1845000.00,
@@ -56,7 +57,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
             },
             {
                 "tender_type": "CARD_PDQ",
-                "tender_label": "Visa / Mastercard Acquirer PDQ",
+                "tender_label": "Visa / Mastercard Card PDQ",
                 "pos_z_report_gross": 3280000.00,
                 "provider_settlement_gross": 3215000.00,
                 "contracted_fee_pct": 1.50,
@@ -67,7 +68,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
                 "actual_bank_credit": 3145877.50,
                 "timing_cutoff_adj_kes": 65000.00,
                 "duplicate_reversal_adj_kes": 0.00,
-                "gl_debit_account": "102300 - Card Acquirer Settlement Bank",
+                "gl_debit_account": "102300 - Card Settlement Bank Account",
                 "gl_credit_account": "401100 - Retail POS Sales Revenue",
                 "provider_ref": "KCB-ACQ-772910"
             },
@@ -92,22 +93,22 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
         "exception_items": [
             {
                 "item_id": "EXC-701-A",
-                "category": "MDR_FEE_OVERCHARGE",
+                "category": "BANK_CARD_COMMISSION_OVERCHARGE",
                 "severity": "HIGH",
-                "tender": "Visa / Mastercard Acquirer PDQ",
+                "tender": "Visa / Mastercard Card PDQ",
                 "reference": "KCB-ACQ-772910",
                 "amount_kes": 20897.50,
-                "root_cause": "Acquirer bank applied 2.15% standard retail tariff instead of contracted 1.50% platinum volume tier on KES 3,215,000 settled PDQ batch.",
-                "recommended_action": "Auto-generate Acquirer Fee Claim Debit Note DN-2026-701 for KES 20,897.50 and post to Acquirer Fee Dispute Receivable."
+                "root_cause": "Acquiring bank applied 2.15% standard Bank Card Commission instead of agreed 1.50% volume rate on KES 3,215,000 settled PDQ batch.",
+                "recommended_action": "Auto-generate Bank Card Commission Overcharge Claim Debit Note DN-2026-701 for KES 20,897.50 and post to Bank Commission Claim Receivable."
             },
             {
                 "item_id": "EXC-701-B",
                 "category": "T1_CUTOFF_TIMING",
                 "severity": "MEDIUM",
-                "tender": "Visa / Mastercard Acquirer PDQ",
+                "tender": "Visa / Mastercard Card PDQ",
                 "reference": "PDQ-TERM-14 (23:54 & 23:58 EAT)",
                 "amount_kes": 65000.00,
-                "root_cause": "Two customer card swipes totaling KES 65,000 captured on POS Z-Report before midnight but settled in Acquirer T+1 batch after 23:45 EAT cutoff.",
+                "root_cause": "Two customer card swipes totaling KES 65,000 captured on POS Z-Report before midnight but settled in next-day T+1 bank batch after 23:45 EAT cutoff.",
                 "recommended_action": "Carry forward KES 65,000 in GL 102350 (Card Settlement in Transit T+1) to auto-clear against 2026-04-20 bank sweep."
             },
             {
@@ -145,7 +146,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
         "signoff_by": None,
         "signoff_timestamp": None,
         "erp_journal_ref": None,
-        "notes": "High card volume weekend batch. Acquirer charged 2.15% MDR on KES 5.1M card batch; KES 92,000 T+1 late cutoff swipes.",
+        "notes": "High card volume weekend batch. Bank deducted 2.15% Bank Card Commission (vs. 1.50% agreed) on KES 5.1M card batch; KES 92,000 T+1 late cutoff swipes.",
         "tenders": [
             {
                 "tender_type": "CASH_TILL",
@@ -183,7 +184,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
             },
             {
                 "tender_type": "CARD_PDQ",
-                "tender_label": "Visa / Mastercard Acquirer PDQ",
+                "tender_label": "Visa / Mastercard Card PDQ",
                 "pos_z_report_gross": 5192000.00,
                 "provider_settlement_gross": 5100000.00,
                 "contracted_fee_pct": 1.50,
@@ -194,7 +195,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
                 "actual_bank_credit": 4990350.00,
                 "timing_cutoff_adj_kes": 92000.00,
                 "duplicate_reversal_adj_kes": 0.00,
-                "gl_debit_account": "102300 - Card Acquirer Settlement Bank",
+                "gl_debit_account": "102300 - Card Settlement Bank Account",
                 "gl_credit_account": "401100 - Retail POS Sales Revenue",
                 "provider_ref": "EQB-ACQ-449102"
             },
@@ -219,22 +220,22 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
         "exception_items": [
             {
                 "item_id": "EXC-702-A",
-                "category": "MDR_FEE_OVERCHARGE",
+                "category": "BANK_CARD_COMMISSION_OVERCHARGE",
                 "severity": "HIGH",
-                "tender": "Visa / Mastercard Acquirer PDQ",
+                "tender": "Visa / Mastercard Card PDQ",
                 "reference": "EQB-ACQ-449102",
                 "amount_kes": 33150.00,
-                "root_cause": "Acquirer deducted 2.15% MDR (KES 109,650) vs contracted 1.50% (KES 76,500) on KES 5,100,000 settled card volume.",
-                "recommended_action": "Issue Acquirer MDR Recovery Claim DN-2026-702 for KES 33,150.00."
+                "root_cause": "Acquiring bank deducted 2.15% Bank Card Commission (KES 109,650) vs agreed 1.50% (KES 76,500) on KES 5,100,000 settled card volume.",
+                "recommended_action": "Issue Bank Card Commission Overcharge Claim DN-2026-702 for KES 33,150.00."
             },
             {
                 "item_id": "EXC-702-B",
                 "category": "T1_CUTOFF_TIMING",
                 "severity": "LOW",
-                "tender": "Visa / Mastercard Acquirer PDQ",
+                "tender": "Visa / Mastercard Card PDQ",
                 "reference": "PDQ-BATCH-LATE-09",
                 "amount_kes": 92000.00,
-                "root_cause": "Three late evening transactions settled in next day's acquirer window after 23:45 EAT cutoff.",
+                "root_cause": "Three late evening transactions settled in next day's bank settlement window after 23:45 EAT cutoff.",
                 "recommended_action": "Book KES 92,000 to Card Settlement in Transit T+1 (GL 102350)."
             }
         ]
@@ -245,14 +246,14 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
         "store_name": "Karen Crossroads Branch",
         "region": "Nairobi Metro",
         "business_date": "2026-04-19",
-        "shift_manager": "jacqueline Mutua",
+        "shift_manager": "Jacqueline Mutua",
         "head_cashier": "Kevin Kiprop",
         "pos_terminals_active": 12,
         "status": "RECONCILED_SIGNED_OFF",
         "signoff_by": "Sarah Ndungu (VP Treasury)",
         "signoff_timestamp": "2026-04-20T07:40:12Z",
         "erp_journal_ref": "SAP-JE-2026-884103",
-        "notes": "Clean 4-way match across Cash, M-Pesa, Card PDQ (1.50% MDR honored), and Corporate Vouchers.",
+        "notes": "Clean 4-way match across Cash, M-Pesa, Card PDQ (Agreed 1.50% Bank Card Commission honored), and Corporate Vouchers.",
         "tenders": [
             {
                 "tender_type": "CASH_TILL",
@@ -290,7 +291,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
             },
             {
                 "tender_type": "CARD_PDQ",
-                "tender_label": "Visa / Mastercard Acquirer PDQ",
+                "tender_label": "Visa / Mastercard Card PDQ",
                 "pos_z_report_gross": 2650000.00,
                 "provider_settlement_gross": 2650000.00,
                 "contracted_fee_pct": 1.50,
@@ -301,7 +302,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
                 "actual_bank_credit": 2610250.00,
                 "timing_cutoff_adj_kes": 0.00,
                 "duplicate_reversal_adj_kes": 0.00,
-                "gl_debit_account": "102300 - Card Acquirer Settlement Bank",
+                "gl_debit_account": "102300 - Card Settlement Bank Account",
                 "gl_credit_account": "401100 - Retail POS Sales Revenue",
                 "provider_ref": "ABSA-ACQ-33019"
             },
@@ -338,7 +339,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
         "signoff_by": None,
         "signoff_timestamp": None,
         "erp_journal_ref": None,
-        "notes": "Duplicate M-Pesa C2B reversal ghost of KES 18,400 + Cashier Till #02 shortage of KES 6,750 + Acquirer 2.15% MDR overcharge.",
+        "notes": "Duplicate M-Pesa C2B reversal ghost of KES 18,400 + Cashier Till #02 shortage of KES 6,750 + Bank Card Commission Overcharge (2.15% charged vs. 1.50% agreed).",
         "tenders": [
             {
                 "tender_type": "CASH_TILL",
@@ -376,7 +377,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
             },
             {
                 "tender_type": "CARD_PDQ",
-                "tender_label": "Visa / Mastercard Acquirer PDQ",
+                "tender_label": "Visa / Mastercard Card PDQ",
                 "pos_z_report_gross": 2140000.00,
                 "provider_settlement_gross": 2100000.00,
                 "contracted_fee_pct": 1.50,
@@ -387,7 +388,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
                 "actual_bank_credit": 2054850.00,
                 "timing_cutoff_adj_kes": 40000.00,
                 "duplicate_reversal_adj_kes": 0.00,
-                "gl_debit_account": "102300 - Card Acquirer Settlement Bank",
+                "gl_debit_account": "102300 - Card Settlement Bank Account",
                 "gl_credit_account": "401100 - Retail POS Sales Revenue",
                 "provider_ref": "KCB-ACQ-772988"
             },
@@ -422,13 +423,13 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
             },
             {
                 "item_id": "EXC-704-B",
-                "category": "MDR_FEE_OVERCHARGE",
+                "category": "BANK_CARD_COMMISSION_OVERCHARGE",
                 "severity": "HIGH",
-                "tender": "Visa / Mastercard Acquirer PDQ",
+                "tender": "Visa / Mastercard Card PDQ",
                 "reference": "KCB-ACQ-772988",
                 "amount_kes": 13650.00,
-                "root_cause": "Acquirer deducted 2.15% MDR instead of contracted 1.50% on KES 2,100,000 settled PDQ batch.",
-                "recommended_action": "Generate Acquirer Debit Note DN-2026-704 for KES 13,650.00."
+                "root_cause": "Acquiring bank deducted 2.15% Bank Card Commission instead of agreed 1.50% rate on KES 2,100,000 settled PDQ batch.",
+                "recommended_action": "Generate Bank Card Commission Overcharge Claim Debit Note DN-2026-704 for KES 13,650.00."
             },
             {
                 "item_id": "EXC-704-C",
@@ -444,10 +445,10 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
                 "item_id": "EXC-704-D",
                 "category": "T1_CUTOFF_TIMING",
                 "severity": "LOW",
-                "tender": "Visa / Mastercard Acquirer PDQ",
+                "tender": "Visa / Mastercard Card PDQ",
                 "reference": "PDQ-TERM-07 (23:51 EAT)",
                 "amount_kes": 40000.00,
-                "root_cause": "Single Visa swipe at 23:51 EAT rolled into T+1 acquirer batch.",
+                "root_cause": "Single Visa swipe at 23:51 EAT rolled into T+1 bank settlement batch.",
                 "recommended_action": "Hold KES 40,000 in GL 102350 (Card Settlement in Transit T+1)."
             }
         ]
@@ -465,7 +466,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
         "signoff_by": None,
         "signoff_timestamp": None,
         "erp_journal_ref": None,
-        "notes": "Cashier Till #08 shortage of KES 2,850 and duplicate M-Pesa reversal of KES 7,200. Card MDR honored at 1.50%.",
+        "notes": "Cashier Till #08 shortage of KES 2,850 and duplicate M-Pesa reversal of KES 7,200. Agreed 1.50% Bank Card Commission honored.",
         "tenders": [
             {
                 "tender_type": "CASH_TILL",
@@ -503,7 +504,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
             },
             {
                 "tender_type": "CARD_PDQ",
-                "tender_label": "Visa / Mastercard Acquirer PDQ",
+                "tender_label": "Visa / Mastercard Card PDQ",
                 "pos_z_report_gross": 1480000.00,
                 "provider_settlement_gross": 1480000.00,
                 "contracted_fee_pct": 1.50,
@@ -514,7 +515,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
                 "actual_bank_credit": 1457800.00,
                 "timing_cutoff_adj_kes": 0.00,
                 "duplicate_reversal_adj_kes": 0.00,
-                "gl_debit_account": "102300 - Card Acquirer Settlement Bank",
+                "gl_debit_account": "102300 - Card Settlement Bank Account",
                 "gl_credit_account": "401100 - Retail POS Sales Revenue",
                 "provider_ref": "COOP-ACQ-66120"
             },
@@ -572,7 +573,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
         "signoff_by": "Sarah Ndungu (VP Treasury)",
         "signoff_timestamp": "2026-04-20T08:05:44Z",
         "erp_journal_ref": "SAP-JE-2026-884109",
-        "notes": "100% matched across POS Z-Report, M-Pesa Paybill statement, Card PDQ settlement (1.50% MDR), and Bank credit.",
+        "notes": "100% matched across POS Z-Report, M-Pesa Paybill statement, Card PDQ settlement (Agreed 1.50% Bank Card Commission), and Bank credit.",
         "tenders": [
             {
                 "tender_type": "CASH_TILL",
@@ -610,7 +611,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
             },
             {
                 "tender_type": "CARD_PDQ",
-                "tender_label": "Visa / Mastercard Acquirer PDQ",
+                "tender_label": "Visa / Mastercard Card PDQ",
                 "pos_z_report_gross": 1320000.00,
                 "provider_settlement_gross": 1320000.00,
                 "contracted_fee_pct": 1.50,
@@ -621,7 +622,7 @@ INITIAL_BATCHES: List[Dict[str, Any]] = [
                 "actual_bank_credit": 1300200.00,
                 "timing_cutoff_adj_kes": 0.00,
                 "duplicate_reversal_adj_kes": 0.00,
-                "gl_debit_account": "102300 - Card Acquirer Settlement Bank",
+                "gl_debit_account": "102300 - Card Settlement Bank Account",
                 "gl_credit_account": "401100 - Retail POS Sales Revenue",
                 "provider_ref": "ABSA-ACQ-33094"
             },

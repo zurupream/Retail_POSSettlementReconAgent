@@ -122,9 +122,9 @@ export default function SignInPage({ onSuccess }) {
   const workflowSteps = [
     {
       num: '01',
-      title: 'Store POS Z-Report + M-Pesa Till CSV + Card Acquirer + Bank Credit',
+      title: 'Store POS Z-Report + M-Pesa Till CSV + Card Settlement + Bank Credit',
       subtitle: 'Multi-Branch Omnichannel Tender Ingestion',
-      desc: 'Ingests end-of-day POS Z-Reports across branches alongside G4S/Wells CIT cash drops, Safaricom M-Pesa BuyGoods/Paybill CSVs, and Visa/Mastercard PDQ acquirer sweeps.',
+      desc: 'Ingests end-of-day POS Z-Reports across branches alongside G4S/Wells CIT cash drops, Safaricom M-Pesa BuyGoods/Paybill CSVs, and Visa/Mastercard PDQ card settlements.',
       badges: ['POS Z-Report', 'M-Pesa Daraja CSV', 'Visa/MC PDQ Batch', 'CIT Vault Cash'],
       icon: Store,
       accent: 'from-blue-600 to-indigo-600',
@@ -132,10 +132,15 @@ export default function SignInPage({ onSuccess }) {
     },
     {
       num: '02',
-      title: 'Deterministic 4-Way Tender Match, MDR Fee & Till Shortage Audit',
-      subtitle: 'Zero-Leakage Fee & Cutoff Variance Engine',
-      desc: 'Audits every card batch against contracted 1.50% MDR (catching 2.15% acquirer overcharges), isolates 23:45 EAT T+1 PDQ cutoffs, flags duplicate M-Pesa reversals, and pins down cashier till shortages.',
-      badges: ['1.50% vs 2.15% MDR Audit', 'T+1 Cutoff Transit', 'M-Pesa Reversal Ghost', 'Till Shortage Pinpoint'],
+      title: 'Deterministic 4-Way Tender Match, Bank Card Commission & Till Shortage Audit',
+      subtitle: 'Zero-Leakage Bank Commission & Cutoff Variance Engine',
+      desc: 'Audits every card batch for Bank Card Commission Overcharge (Agreed 1.50% vs. Charged 2.15%), isolates 23:45 EAT T+1 PDQ cutoffs, flags duplicate M-Pesa reversals, and pins down cashier till shortages.',
+      badges: [
+        'Bank Card Commission Overcharge (Agreed 1.50% vs. Charged 2.15%)',
+        'T+1 Cutoff Transit',
+        'M-Pesa Reversal Ghost',
+        'Till Shortage Pinpoint'
+      ],
       icon: ShieldCheck,
       accent: 'from-emerald-600 to-teal-600',
       lightBg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -143,9 +148,9 @@ export default function SignInPage({ onSuccess }) {
     {
       num: '03',
       title: '1-Page Store Tender Recon & Daily Treasury GL Summary',
-      subtitle: 'Balanced SAP / ERP Journal & Acquirer Debit Notes',
-      desc: 'Produces a print-ready 1-Page Store Tender Reconciliation Certificate, Acquirer MDR Claim Debit Notes, Staff Shortage Receivables, and balanced General Ledger postings.',
-      badges: ['SAP GL Auto-Post', 'Acquirer Debit Note', 'CFO Sign-Off Seal', '1-Page Audit PDF'],
+      subtitle: 'Balanced SAP / ERP Journal & Bank Commission Claim Debit Notes',
+      desc: 'Produces a print-ready 1-Page Store Tender Reconciliation Certificate, Bank Card Commission Overcharge Claim Debit Notes, Staff Shortage Receivables, and balanced General Ledger postings.',
+      badges: ['SAP GL Auto-Post', 'Bank Commission Claim Note', 'CFO Sign-Off Seal', '1-Page Audit PDF'],
       icon: FileSpreadsheet,
       accent: 'from-amber-500 to-orange-600',
       lightBg: 'bg-amber-50 text-amber-800 border-amber-200',
@@ -180,7 +185,7 @@ export default function SignInPage({ onSuccess }) {
               <Smartphone className="w-4 h-4 text-emerald-600" /> Safaricom Daraja C2B
             </span>
             <span className="flex items-center gap-1.5">
-              <CreditCard className="w-4 h-4 text-blue-600" /> Acquirer MDR Audit (1.50%)
+              <CreditCard className="w-4 h-4 text-blue-600" /> Bank Card Commission Audit (1.50%)
             </span>
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-indigo-600" /> Enterprise SSO Protected
@@ -201,7 +206,7 @@ export default function SignInPage({ onSuccess }) {
               Eliminate POS-to-Bank Settlement Leakage Across Every Branch Till
             </h2>
             <p className="text-sm text-slate-600 mt-2 leading-relaxed">
-              Reconcile daily branch Z-Reports against physical CIT cash drops, M-Pesa BuyGoods/Paybill statements, and Card Acquirer PDQ settlements in seconds—isolating MDR overcharges and reversal ghosts automatically.
+              Reconcile daily branch Z-Reports against physical CIT cash drops, M-Pesa BuyGoods/Paybill statements, and Card PDQ settlements in seconds—isolating Bank Card Commission Overcharges and reversal ghosts automatically.
             </p>
           </div>
 
@@ -251,10 +256,10 @@ export default function SignInPage({ onSuccess }) {
           {/* Bottom Executive Metrics Bar */}
           <div className="grid grid-cols-3 gap-3 pt-1">
             <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm">
-              <div className="text-xs text-slate-500 font-medium">Contracted Card MDR</div>
-              <div className="text-lg font-extrabold text-slate-900 mt-0.5">1.50% vs 2.15%</div>
+              <div className="text-xs text-slate-500 font-medium">Bank Card Commission</div>
+              <div className="text-lg font-extrabold text-slate-900 mt-0.5">Agreed 1.50% vs. 2.15%</div>
               <div className="text-[11px] text-emerald-700 font-medium mt-0.5">
-                Auto-flags 65 bps acquirer overcharge
+                Auto-flags 0.65% Bank Card Commission Overcharge
               </div>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm">

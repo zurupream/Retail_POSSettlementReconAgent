@@ -57,7 +57,7 @@ class GoogleAuthPayload(BaseModel):
 class SignOffPayload(BaseModel):
     approver_name: Optional[str] = "Sarah Ndungu (VP Treasury)"
     approver_email: Optional[str] = "treasury@retailcorp.co.ke"
-    resolution_note: Optional[str] = "Approved 4-Way POS Tender Reconciliation & GL Journal Posting; Acquirer MDR Debit Note & Till Shortage Journals generated."
+    resolution_note: Optional[str] = "Approved 4-Way POS Tender Reconciliation & GL Journal Posting; Bank Card Commission Overcharge Claim Debit Note & Till Shortage Journals generated."
 
 
 class SimulateBatchPayload(BaseModel):
@@ -77,9 +77,9 @@ class AgentAskPayload(BaseModel):
 # --- Deterministic 4-Way Reconciliation Engine ---
 def compute_batch_reconciliation(batch: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Deterministic Python 4-Way Tender Reconciliation & MDR Fee Audit Engine.
-    Computes exact POS Z-Report vs Provider Gross vs Fee Audit vs Net Bank Credit,
-    isolating MDR overcharges, T+1 card cutoffs, duplicate M-Pesa reversals, and cash till shortages.
+    Deterministic Python 4-Way Store Tender Match & Bank Card Commission Audit Engine.
+    Computes exact POS Z-Report vs Provider Gross vs Bank Card Commission Audit vs Net Bank Credit,
+    isolating Bank Card Commission Overcharges, T+1 card cutoffs, duplicate M-Pesa reversals, and cash till shortages.
     """
     enriched_tenders = []
     total_pos_gross = 0.0
@@ -125,6 +125,7 @@ def compute_batch_reconciliation(batch: Dict[str, Any]) -> Dict[str, Any]:
             **t,
             "gross_variance_kes": gross_variance,
             "fee_overcharge_kes": fee_overcharge,
+            "bank_commission_overcharge_kes": fee_overcharge,
             "net_bank_variance_kes": net_bank_variance,
             "cash_shortage_kes": cash_short_adj,
             "unexplained_variance_kes": unexplained_variance,
@@ -172,10 +173,10 @@ def compute_batch_reconciliation(batch: Dict[str, Any]) -> Dict[str, Any]:
         {
             "line_no": 3,
             "account_code": "102300",
-            "account_name": "Card Acquirer Settlement Bank Account",
+            "account_name": "Card Settlement Bank Account",
             "debit_kes": round(next((x["actual_bank_credit"] for x in enriched_tenders if x["tender_type"] == "CARD_PDQ"), 0.0), 2),
             "credit_kes": 0.0,
-            "narrative": f"{batch['store_code']} Net Visa/MC Acquirer Settlement Credit",
+            "narrative": f"{batch['store_code']} Net Visa/MC Card Settlement Credit",
         },
         {
             "line_no": 4,
@@ -188,10 +189,10 @@ def compute_batch_reconciliation(batch: Dict[str, Any]) -> Dict[str, Any]:
         {
             "line_no": 5,
             "account_code": "614200",
-            "account_name": "Contracted M-Pesa & Card MDR Merchant Fees",
+            "account_name": "Agreed M-Pesa & Bank Card Commission Expense",
             "debit_kes": round(total_expected_fee, 2),
             "credit_kes": 0.0,
-            "narrative": f"Contracted 0.50% M-Pesa & {CONTRACTED_CARD_MDR_PCT:.2f}% Card MDR Fee Expense",
+            "narrative": f"Agreed 0.50% M-Pesa & {CONTRACTED_CARD_MDR_PCT:.2f}% Bank Card Commission Expense",
         },
     ]
 
@@ -200,10 +201,10 @@ def compute_batch_reconciliation(batch: Dict[str, Any]) -> Dict[str, Any]:
         gl_entries.append({
             "line_no": line_no,
             "account_code": "131200",
-            "account_name": "Acquirer MDR Overcharge Claim Receivable (Debit Note)",
+            "account_name": "Bank Card Commission Overcharge Claim Receivable (Debit Note)",
             "debit_kes": round(total_mdr_overcharge, 2),
             "credit_kes": 0.0,
-            "narrative": f"Claimable Acquirer MDR Overcharge (2.15% charged vs {CONTRACTED_CARD_MDR_PCT:.2f}% contracted)",
+            "narrative": f"Claimable Bank Card Commission Overcharge (Charged 2.15% vs. Agreed {CONTRACTED_CARD_MDR_PCT:.2f}%)",
         })
         line_no += 1
 
@@ -260,6 +261,7 @@ def compute_batch_reconciliation(batch: Dict[str, Any]) -> Dict[str, Any]:
             "total_expected_fee_kes": round(total_expected_fee, 2),
             "total_actual_fee_kes": round(total_actual_fee, 2),
             "total_mdr_overcharge_kes": round(total_mdr_overcharge, 2),
+            "total_bank_commission_overcharge_kes": round(total_mdr_overcharge, 2),
             "total_expected_net_bank_kes": round(total_expected_net_bank, 2),
             "total_actual_bank_credit_kes": round(total_actual_bank_credit, 2),
             "total_net_variance_kes": total_net_variance,
@@ -269,6 +271,7 @@ def compute_batch_reconciliation(batch: Dict[str, Any]) -> Dict[str, Any]:
             "unexplained_residual_kes": unexplained_residual,
             "exception_count": len(batch.get("exception_items", [])),
             "contracted_card_mdr_pct": CONTRACTED_CARD_MDR_PCT,
+            "agreed_bank_card_commission_pct": CONTRACTED_CARD_MDR_PCT,
             "contracted_mpesa_fee_pct": CONTRACTED_MPESA_FEE_PCT,
             "gl_balanced": True,
             "gl_total_debit_kes": total_debits,
@@ -280,13 +283,15 @@ def compute_batch_reconciliation(batch: Dict[str, Any]) -> Dict[str, Any]:
 
 def compute_portfolio_kpis(batches: List[Dict[str, Any]]) -> Dict[str, Any]:
     enriched = [compute_batch_reconciliation(b) for b in batches]
+    total_overcharge = round(sum(b["summary"]["total_mdr_overcharge_kes"] for b in enriched), 2)
     return {
         "total_stores": len(enriched),
         "reconciled_stores": sum(1 for b in enriched if b["status"] == "RECONCILED_SIGNED_OFF"),
         "flagged_stores": sum(1 for b in enriched if b["status"] != "RECONCILED_SIGNED_OFF"),
         "total_pos_gross_kes": round(sum(b["summary"]["total_pos_gross_kes"] for b in enriched), 2),
         "total_actual_bank_credit_kes": round(sum(b["summary"]["total_actual_bank_credit_kes"] for b in enriched), 2),
-        "total_mdr_overcharge_kes": round(sum(b["summary"]["total_mdr_overcharge_kes"] for b in enriched), 2),
+        "total_mdr_overcharge_kes": total_overcharge,
+        "total_bank_commission_overcharge_kes": total_overcharge,
         "total_timing_cutoff_kes": round(sum(b["summary"]["total_timing_cutoff_kes"] for b in enriched), 2),
         "total_mpesa_reversal_kes": round(sum(b["summary"]["total_mpesa_reversal_kes"] for b in enriched), 2),
         "total_cash_shortage_kes": round(sum(b["summary"]["total_cash_shortage_kes"] for b in enriched), 2),
@@ -301,6 +306,7 @@ def health_check():
         "status": "ok",
         "service": "Retail_POSSettlementReconAgent",
         "agent_number": "07",
+        "terminology": "Plain Business English (Bank Card Commission Overcharge)",
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "batches_loaded": len(BATCH_STORE),
     }
@@ -418,30 +424,30 @@ def simulate_new_batch(payload: SimulateBatchPayload):
     card_pos = 2850000.00
     card_cutoff = 50000.00
     card_prov = card_pos - card_cutoff
-    expected_mdr = round(card_prov * (CONTRACTED_CARD_MDR_PCT / 100.0), 2)
-    actual_mdr_pct = 2.15 if payload.inject_mdr_overcharge else CONTRACTED_CARD_MDR_PCT
-    actual_mdr = round(card_prov * (actual_mdr_pct / 100.0), 2)
-    card_expected_net = round(card_pos - expected_mdr, 2)
-    card_actual_net = round(card_prov - actual_mdr, 2)
+    expected_commission = round(card_prov * (CONTRACTED_CARD_MDR_PCT / 100.0), 2)
+    actual_commission_pct = 2.15 if payload.inject_mdr_overcharge else CONTRACTED_CARD_MDR_PCT
+    actual_commission = round(card_prov * (actual_commission_pct / 100.0), 2)
+    card_expected_net = round(card_pos - expected_commission, 2)
+    card_actual_net = round(card_prov - actual_commission, 2)
 
     exceptions = []
     if payload.inject_mdr_overcharge:
-        overcharge_amt = round(actual_mdr - expected_mdr, 2)
+        overcharge_amt = round(actual_commission - expected_commission, 2)
         exceptions.append({
             "item_id": f"EXC-{seq}-A",
-            "category": "MDR_FEE_OVERCHARGE",
+            "category": "BANK_CARD_COMMISSION_OVERCHARGE",
             "severity": "HIGH",
-            "tender": "Visa / Mastercard Acquirer PDQ",
+            "tender": "Visa / Mastercard Card PDQ",
             "reference": f"KCB-ACQ-99{seq}",
             "amount_kes": overcharge_amt,
-            "root_cause": f"Acquirer applied 2.15% MDR tariff instead of contracted 1.50% on KES {card_prov:,.0f} PDQ batch.",
-            "recommended_action": f"Auto-issue Acquirer Debit Note DN-2026-{seq} for KES {overcharge_amt:,.2f}.",
+            "root_cause": f"Acquiring bank applied 2.15% Bank Card Commission instead of agreed 1.50% rate on KES {card_prov:,.0f} PDQ batch.",
+            "recommended_action": f"Auto-issue Bank Card Commission Overcharge Claim Debit Note DN-2026-{seq} for KES {overcharge_amt:,.2f}.",
         })
     exceptions.append({
         "item_id": f"EXC-{seq}-B",
         "category": "T1_CUTOFF_TIMING",
         "severity": "MEDIUM",
-        "tender": "Visa / Mastercard Acquirer PDQ",
+        "tender": "Visa / Mastercard Card PDQ",
         "reference": "PDQ-LATE-2356",
         "amount_kes": card_cutoff,
         "root_cause": "Late night PDQ swipes after 23:45 EAT cutoff rolling into T+1 bank settlement.",
@@ -483,7 +489,7 @@ def simulate_new_batch(payload: SimulateBatchPayload):
         "signoff_by": None,
         "signoff_timestamp": None,
         "erp_journal_ref": None,
-        "notes": "Simulated omnichannel store closing batch ingested via POS Z-Report + Daraja CSV + Acquirer API.",
+        "notes": "Simulated omnichannel store closing batch ingested via POS Z-Report + Daraja CSV + Card Bank Settlement API.",
         "tenders": [
             {
                 "tender_type": "CASH_TILL",
@@ -521,18 +527,18 @@ def simulate_new_batch(payload: SimulateBatchPayload):
             },
             {
                 "tender_type": "CARD_PDQ",
-                "tender_label": "Visa / Mastercard Acquirer PDQ",
+                "tender_label": "Visa / Mastercard Card PDQ",
                 "pos_z_report_gross": card_pos,
                 "provider_settlement_gross": card_prov,
                 "contracted_fee_pct": CONTRACTED_CARD_MDR_PCT,
-                "actual_fee_pct": actual_mdr_pct,
-                "expected_fee_kes": expected_mdr,
-                "actual_fee_deducted_kes": actual_mdr,
+                "actual_fee_pct": actual_commission_pct,
+                "expected_fee_kes": expected_commission,
+                "actual_fee_deducted_kes": actual_commission,
                 "expected_net_bank_credit": card_expected_net,
                 "actual_bank_credit": card_actual_net,
                 "timing_cutoff_adj_kes": card_cutoff,
                 "duplicate_reversal_adj_kes": 0.00,
-                "gl_debit_account": "102300 - Card Acquirer Settlement Bank",
+                "gl_debit_account": "102300 - Card Settlement Bank Account",
                 "gl_credit_account": "401100 - Retail POS Sales Revenue",
                 "provider_ref": f"KCB-ACQ-99{seq}",
             },
@@ -587,7 +593,7 @@ def ask_treasury_copilot(payload: AgentAskPayload):
         f"POS Gross = KES {portfolio['total_pos_gross_kes']:,.2f}, "
         f"Actual Bank Credit = KES {portfolio['total_actual_bank_credit_kes']:,.2f}, "
         f"Total Net Variance = KES {portfolio['total_net_variance_kes']:,.2f} "
-        f"(Acquirer MDR Overcharges = KES {portfolio['total_mdr_overcharge_kes']:,.2f}, "
+        f"(Bank Card Commission Overcharges = KES {portfolio['total_mdr_overcharge_kes']:,.2f}, "
         f"T+1 Card Cutoff Timing = KES {portfolio['total_timing_cutoff_kes']:,.2f}, "
         f"Duplicate M-Pesa Reversals = KES {portfolio['total_mpesa_reversal_kes']:,.2f}, "
         f"Cashier Till Shortages = KES {portfolio['total_cash_shortage_kes']:,.2f}).\n"
@@ -598,7 +604,7 @@ def ask_treasury_copilot(payload: AgentAskPayload):
             f"Selected Store Batch {target_batch['batch_id']} ({target_batch['store_name']}): "
             f"Status={target_batch['status']}, POS Gross=KES {s['total_pos_gross_kes']:,.2f}, "
             f"Actual Bank Credit=KES {s['total_actual_bank_credit_kes']:,.2f}, "
-            f"MDR Overcharge=KES {s['total_mdr_overcharge_kes']:,.2f}, "
+            f"Bank Card Commission Overcharge=KES {s['total_mdr_overcharge_kes']:,.2f}, "
             f"T+1 Card Cutoff=KES {s['total_timing_cutoff_kes']:,.2f}, "
             f"M-Pesa Reversal=KES {s['total_mpesa_reversal_kes']:,.2f}, "
             f"Cash Shortage=KES {s['total_cash_shortage_kes']:,.2f}."
@@ -614,7 +620,9 @@ def ask_treasury_copilot(payload: AgentAskPayload):
             )
             prompt = (
                 "You are an expert Retail Treasury & 4-Way POS Settlement Reconciliation AI Co-Pilot "
-                "for an East African omnichannel retailer. Use the exact KES figures below to give a concise, "
+                "for an East African omnichannel retailer. Always use plain retail business English: "
+                "say 'Bank Card Commission' and 'Bank Card Commission Overcharge (Agreed 1.50% vs. Charged 2.15%)' "
+                "and NEVER use the banking acronym 'MDR'. Use the exact KES figures below to give a concise, "
                 "executive-grade audit response with GL account numbers and recovery steps.\n\n"
                 f"LIVE DATA:\n{context_summary}\n\n"
                 f"USER QUESTION: {question}"
@@ -624,15 +632,16 @@ def ask_treasury_copilot(payload: AgentAskPayload):
                 contents=prompt,
             )
             if resp and resp.text:
+                clean_text = resp.text.replace("MDR", "Bank Card Commission")
                 return {
-                    "answer": resp.text,
+                    "answer": clean_text,
                     "engine": "vertex-ai-gemini-2.5-flash",
                     "batch_id": target_batch["batch_id"] if target_batch else None,
                 }
         except Exception:
             pass
 
-    # Deterministic fallback with exact numbers
+    # Deterministic fallback with exact numbers in plain business English
     s = target_batch["summary"] if target_batch else {}
     store_title = f"{target_batch['store_name']} ({target_batch['batch_id']})" if target_batch else "Portfolio"
     deterministic_answer = (
@@ -642,7 +651,7 @@ def ask_treasury_copilot(payload: AgentAskPayload):
         f"- **Verified Net Bank Credits:** KES {portfolio['total_actual_bank_credit_kes']:,.2f}\n"
         f"- **Total Explained Variance:** KES {portfolio['total_net_variance_kes']:,.2f} (Zero unexplained residual)\n\n"
         f"**2. Root-Cause Breakdown for {store_title}**\n"
-        f"- **Acquirer MDR Fee Overcharge (GL 131200):** **KES {s.get('total_mdr_overcharge_kes', 0.0):,.2f}** — Acquirer bank applied `2.15%` standard tariff instead of contracted `1.50%` MDR tier. Action: Issue formal Acquirer Debit Note.\n"
+        f"- **Bank Card Commission Overcharge (GL 131200):** **KES {s.get('total_mdr_overcharge_kes', 0.0):,.2f}** — Acquiring bank deducted `2.15%` Bank Card Commission instead of the agreed `1.50%` rate. Action: Issue formal Bank Card Commission Overcharge Claim Debit Note.\n"
         f"- **T+1 Card PDQ Cutoff Timing (GL 102350):** **KES {s.get('total_timing_cutoff_kes', 0.0):,.2f}** — Late evening swipes after `23:45 EAT` cutoff carried in transit to clear tomorrow's bank sweep.\n"
         f"- **Duplicate M-Pesa Reversal Ghosts (GL 131300):** **KES {s.get('total_mpesa_reversal_kes', 0.0):,.2f}** — Daraja API timeout reversal after receipt validation; lodge Safaricom merchant dispute with CCTV/POS log.\n"
         f"- **Cashier Till Float Shortage (GL 131400):** **KES {s.get('total_cash_shortage_kes', 0.0):,.2f}** — Physical G4S/Wells CIT vault count lower than Z-Report cash; booked to Staff Shortage Receivable.\n\n"

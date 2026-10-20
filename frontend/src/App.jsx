@@ -55,7 +55,7 @@ export default function App() {
     {
       role: 'assistant',
       engine: 'deterministic-4way-recon-engine',
-      text: 'Welcome to the Retail Omnichannel Treasury AI Co-Pilot. Ask me about Acquirer MDR fee overcharges (2.15% vs contracted 1.50%), T+1 PDQ cutoff timing adjustments, duplicate M-Pesa reversals, or cashier till float shortages across any store batch.',
+      text: 'Welcome to the Retail Omnichannel Treasury AI Co-Pilot. Ask me about Bank Card Commission Overcharges (Charged 2.15% vs. Agreed 1.50%), T+1 PDQ cutoff timing adjustments, duplicate M-Pesa reversals, or cashier till float shortages across any store batch.',
     },
   ]);
   const [asking, setAsking] = useState(false);
@@ -113,7 +113,7 @@ export default function App() {
           approver_name: user?.name || 'Sarah Ndungu (VP Treasury)',
           approver_email: user?.email || 'treasury@retailcorp.co.ke',
           resolution_note:
-            'Approved 4-Way POS Tender Reconciliation & GL Journal Posting; Acquirer MDR Debit Note & Till Shortage Journals generated.',
+            'Approved 4-Way POS Tender Reconciliation & GL Journal Posting; Bank Card Commission Overcharge Claim Debit Note & Till Shortage Journals generated.',
         }),
       });
       const data = await res.json();
@@ -155,7 +155,7 @@ export default function App() {
         setSelectedBatchId(data.batch.batch_id);
         setActiveTab('WORKBENCH');
         setBannerMsg(
-          `Simulated new store closing batch ${data.batch.batch_id} (${data.batch.store_name}) with 4-way tender audit completed.`
+          `Simulated new store closing batch ${data.batch.batch_id} (${data.batch.store_name}) with 4-way store tender match & bank commission audit completed.`
         );
       }
     } catch (err) {
@@ -210,25 +210,25 @@ export default function App() {
   const tabs = [
     {
       id: 'QUEUE',
-      label: 'Tab 1: Daily Branch POS Settlement Queue',
+      label: '1. Daily Branch POS Settlement Queue',
       shortLabel: '1. Daily Branch POS Queue',
       icon: Store,
     },
     {
       id: 'WORKBENCH',
-      label: 'Tab 2: 4-Way Tender Reconciliation & MDR Fee Audit Workbench',
-      shortLabel: '2. 4-Way Tender & MDR Audit',
+      label: '2. 4-Way Store Tender Match & Bank Commission Audit',
+      shortLabel: '2. 4-Way Store Tender Match & Bank Commission Audit',
       icon: ShieldCheck,
     },
     {
       id: 'COPILOT',
-      label: 'Tab 3: Retail Treasury AI Co-Pilot',
+      label: '3. Retail Treasury AI Co-Pilot',
       shortLabel: '3. Treasury AI Co-Pilot',
       icon: Bot,
     },
     {
       id: 'SUMMARY',
-      label: 'Tab 4: 1-Page Store Tender Reconciliation & GL Posting Summary',
+      label: '4. 1-Page Store Tender Reconciliation & GL Posting Summary',
       shortLabel: '4. 1-Page Store Recon & GL Summary',
       icon: FileSpreadsheet,
     },
@@ -262,7 +262,7 @@ export default function App() {
                   Agent #07 • Retail Treasury Suite
                 </span>
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  Contracted Card MDR: 1.50% | M-Pesa: 0.50%
+                  Agreed Bank Card Commission: 1.50% | M-Pesa Tariff: 0.50%
                 </span>
               </div>
               <h1 className="text-base font-extrabold text-slate-900 mt-0.5">
@@ -377,13 +377,13 @@ export default function App() {
 
             <div className="bg-white rounded-2xl border border-red-200 p-4 shadow-sm">
               <div className="text-[11px] font-bold uppercase tracking-wider text-red-600">
-                Acquirer MDR Overcharges
+                Bank Card Commission Overcharges
               </div>
               <div className="text-lg font-extrabold text-red-700 mt-1">
                 {formatKES(portfolio.total_mdr_overcharge_kes)}
               </div>
               <div className="text-xs text-red-600 mt-0.5">
-                2.15% charged vs 1.50% contracted
+                Charged 2.15% vs. Agreed 1.50%
               </div>
             </div>
 
@@ -425,7 +425,7 @@ export default function App() {
                   Daily Multi-Branch POS Closing &amp; 4-Way Settlement Queue
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Select any retail branch closing batch to inspect 4-way tender reconciliation (Cash CIT, M-Pesa Daraja, Card PDQ, Corporate Vouchers) and approve GL sign-off.
+                  Select any retail branch closing batch to inspect 4-way tender reconciliation (Cash CIT, M-Pesa Daraja, Card PDQ, Corporate Vouchers), audit Bank Card Commission Overcharges, and approve GL sign-off.
                 </p>
               </div>
               <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
@@ -441,7 +441,7 @@ export default function App() {
                     <th className="py-3.5 px-4">Batch ID &amp; Store</th>
                     <th className="py-3.5 px-4">POS Z-Report Gross</th>
                     <th className="py-3.5 px-4">Actual Bank Credit</th>
-                    <th className="py-3.5 px-4">MDR Overcharge</th>
+                    <th className="py-3.5 px-4">Bank Commission Overcharge</th>
                     <th className="py-3.5 px-4">T+1 Cutoff</th>
                     <th className="py-3.5 px-4">M-Pesa / Cash Var</th>
                     <th className="py-3.5 px-4">Recon Status</th>
@@ -541,7 +541,7 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 2: 4-WAY TENDER RECONCILIATION & MDR FEE AUDIT WORKBENCH */}
+        {/* TAB 2: 4-WAY STORE TENDER MATCH & BANK COMMISSION AUDIT */}
         {activeTab === 'WORKBENCH' && selectedBatch && (
           <div className="space-y-6">
             {/* Batch Header & One-Click Sign-Off Bar */}
@@ -559,7 +559,7 @@ export default function App() {
                   </span>
                 </div>
                 <h2 className="text-xl font-extrabold text-slate-900 mt-1">
-                  {selectedBatch.store_name} — 4-Way Tender &amp; MDR Fee Audit Workbench
+                  {selectedBatch.store_name} — 4-Way Store Tender Match &amp; Bank Commission Audit
                 </h2>
                 <p className="text-xs text-slate-600 mt-0.5">
                   Shift Manager: <strong>{selectedBatch.shift_manager}</strong> • Head Cashier:{' '}
@@ -611,10 +611,10 @@ export default function App() {
               <div className="p-5 border-b border-slate-200 flex items-center justify-between">
                 <div>
                   <h3 className="text-base font-extrabold text-slate-900">
-                    Deterministic 4-Way Tender Reconciliation Matrix
+                    Deterministic 4-Way Store Tender Match &amp; Bank Card Commission Audit Matrix
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Compares (1) Store POS Z-Report vs (2) Provider Settlement Gross vs (3) Contracted MDR/Tariff Audit vs (4) Actual Net Bank Credit.
+                    Compares (1) Store POS Z-Report vs (2) Provider Settlement Gross vs (3) Agreed Bank Commission % vs. Actual Commission Deducted % vs (4) Actual Net Bank Credit.
                   </p>
                 </div>
                 <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -629,86 +629,92 @@ export default function App() {
                       <th className="py-3.5 px-4">Tender Stream</th>
                       <th className="py-3.5 px-4">1. POS Z-Report Gross</th>
                       <th className="py-3.5 px-4">2. Provider Gross</th>
-                      <th className="py-3.5 px-4">3. Fee Audit (Exp vs Ded)</th>
-                      <th className="py-3.5 px-4">MDR Overcharge</th>
+                      <th className="py-3.5 px-4">3. Agreed Bank Commission % vs. Actual Commission Deducted %</th>
+                      <th className="py-3.5 px-4">Bank Commission Overcharge Claim</th>
                       <th className="py-3.5 px-4">4. Actual Bank Credit</th>
                       <th className="py-3.5 px-4">Isolated Adjustments</th>
                       <th className="py-3.5 px-4">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 text-xs">
-                    {selectedBatch.tenders.map((t) => (
-                      <tr key={t.tender_type} className="hover:bg-slate-50/70">
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-2 font-bold text-slate-900">
-                            {getTenderIcon(t.tender_type)}
-                            <span>{t.tender_label}</span>
-                          </div>
-                          <div className="text-[11px] text-slate-500 font-mono mt-0.5">
-                            Ref: {t.provider_ref}
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 font-bold text-slate-900">
-                          {formatKES(t.pos_z_report_gross)}
-                        </td>
-                        <td className="py-4 px-4 font-semibold text-slate-800">
-                          {formatKES(t.provider_settlement_gross)}
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="font-semibold text-slate-800">
-                            Exp ({t.contracted_fee_pct.toFixed(2)}%): {formatKES(t.expected_fee_kes)}
-                          </div>
-                          <div className="text-[11px] text-slate-500">
-                            Deducted: {formatKES(t.actual_fee_deducted_kes)}
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          {t.fee_overcharge_kes > 0 ? (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 font-bold">
-                              +{formatKES(t.fee_overcharge_kes)} (2.15%)
-                            </span>
-                          ) : (
-                            <span className="text-emerald-700 font-semibold">0.00 (Honored)</span>
-                          )}
-                        </td>
-                        <td className="py-4 px-4 font-bold text-emerald-700">
-                          {formatKES(t.actual_bank_credit)}
-                        </td>
-                        <td className="py-4 px-4 space-y-1">
-                          {t.timing_cutoff_adj_kes > 0 && (
-                            <div className="text-[11px] font-semibold text-blue-700">
-                              T+1 Cutoff: {formatKES(t.timing_cutoff_adj_kes)}
+                    {selectedBatch.tenders.map((t) => {
+                      const actualPct =
+                        t.actual_fee_pct !== undefined
+                          ? Number(t.actual_fee_pct)
+                          : Number(t.contracted_fee_pct || 0);
+                      return (
+                        <tr key={t.tender_type} className="hover:bg-slate-50/70">
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2 font-bold text-slate-900">
+                              {getTenderIcon(t.tender_type)}
+                              <span>{t.tender_label}</span>
                             </div>
-                          )}
-                          {t.duplicate_reversal_adj_kes > 0 && (
-                            <div className="text-[11px] font-semibold text-amber-700">
-                              M-Pesa Reversal: {formatKES(t.duplicate_reversal_adj_kes)}
+                            <div className="text-[11px] text-slate-500 font-mono mt-0.5">
+                              Ref: {t.provider_ref}
                             </div>
-                          )}
-                          {t.cash_shortage_kes > 0 && (
-                            <div className="text-[11px] font-semibold text-red-700">
-                              Till Shortage: {formatKES(t.cash_shortage_kes)}
+                          </td>
+                          <td className="py-4 px-4 font-bold text-slate-900">
+                            {formatKES(t.pos_z_report_gross)}
+                          </td>
+                          <td className="py-4 px-4 font-semibold text-slate-800">
+                            {formatKES(t.provider_settlement_gross)}
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="font-semibold text-slate-800">
+                              Agreed ({t.contracted_fee_pct.toFixed(2)}%): {formatKES(t.expected_fee_kes)}
                             </div>
-                          )}
-                          {t.timing_cutoff_adj_kes === 0 &&
-                            t.duplicate_reversal_adj_kes === 0 &&
-                            t.cash_shortage_kes === 0 && (
-                              <span className="text-[11px] text-slate-400">None</span>
+                            <div className="text-[11px] text-slate-500">
+                              Deducted ({actualPct.toFixed(2)}%): {formatKES(t.actual_fee_deducted_kes)}
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            {t.fee_overcharge_kes > 0 ? (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 font-bold">
+                                +{formatKES(t.fee_overcharge_kes)} (2.15% Charged)
+                              </span>
+                            ) : (
+                              <span className="text-emerald-700 font-semibold">0.00 (Agreed Rate Honored)</span>
                             )}
-                        </td>
-                        <td className="py-4 px-4">
-                          {t.tender_status === 'MATCHED' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[11px]">
-                              <CheckCircle2 className="w-3 h-3" /> Matched
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[11px]">
-                              <AlertTriangle className="w-3 h-3" /> Variance Isolated
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="py-4 px-4 font-bold text-emerald-700">
+                            {formatKES(t.actual_bank_credit)}
+                          </td>
+                          <td className="py-4 px-4 space-y-1">
+                            {t.timing_cutoff_adj_kes > 0 && (
+                              <div className="text-[11px] font-semibold text-blue-700">
+                                T+1 Cutoff: {formatKES(t.timing_cutoff_adj_kes)}
+                              </div>
+                            )}
+                            {t.duplicate_reversal_adj_kes > 0 && (
+                              <div className="text-[11px] font-semibold text-amber-700">
+                                M-Pesa Reversal: {formatKES(t.duplicate_reversal_adj_kes)}
+                              </div>
+                            )}
+                            {t.cash_shortage_kes > 0 && (
+                              <div className="text-[11px] font-semibold text-red-700">
+                                Till Shortage: {formatKES(t.cash_shortage_kes)}
+                              </div>
+                            )}
+                            {t.timing_cutoff_adj_kes === 0 &&
+                              t.duplicate_reversal_adj_kes === 0 &&
+                              t.cash_shortage_kes === 0 && (
+                                <span className="text-[11px] text-slate-400">None</span>
+                              )}
+                          </td>
+                          <td className="py-4 px-4">
+                            {t.tender_status === 'MATCHED' ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[11px]">
+                                <CheckCircle2 className="w-3 h-3" /> Matched
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[11px]">
+                                <AlertTriangle className="w-3 h-3" /> Variance Isolated
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                   <tfoot>
                     <tr className="bg-slate-900 text-white font-bold text-xs">
@@ -720,7 +726,7 @@ export default function App() {
                         {formatKES(selectedBatch.summary.total_provider_gross_kes)}
                       </td>
                       <td className="py-3.5 px-4">
-                        Exp: {formatKES(selectedBatch.summary.total_expected_fee_kes)} | Ded:{' '}
+                        Agreed: {formatKES(selectedBatch.summary.total_expected_fee_kes)} | Ded:{' '}
                         {formatKES(selectedBatch.summary.total_actual_fee_kes)}
                       </td>
                       <td className="py-3.5 px-4 text-red-300">
@@ -745,7 +751,7 @@ export default function App() {
               <div className="lg:col-span-6 bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-extrabold text-slate-900">
-                    Isolated Root-Cause Exceptions &amp; Recovery Actions
+                    Isolated Root-Cause Exceptions &amp; Bank Commission Recovery Claims
                   </h3>
                   <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
                     {selectedBatch.exception_items.length} Items
@@ -759,7 +765,7 @@ export default function App() {
                       Zero Exceptions — 100% Clean 4-Way Tender Match
                     </div>
                     <p className="text-xs text-emerald-700">
-                      All Cash CIT drops, M-Pesa BuyGoods sweeps, Card PDQ MDR rates (1.50%), and Corporate Vouchers reconciled to the cent.
+                      All Cash CIT drops, M-Pesa BuyGoods sweeps, Bank Card Commission rates (Agreed 1.50%), and Corporate Vouchers reconciled to the cent.
                     </p>
                   </div>
                 ) : (
@@ -889,9 +895,9 @@ export default function App() {
 
               <div className="space-y-2">
                 {[
-                  `Draft an Acquirer MDR Fee Claim Debit Note for ${selectedBatch?.store_name} (2.15% charged vs 1.50% contracted).`,
+                  `Draft a Bank Card Commission Overcharge Claim Debit Note for ${selectedBatch?.store_name} (Charged 2.15% vs. Agreed 1.50%).`,
                   `Explain the duplicate M-Pesa reversal ghost and cashier till shortage for ${selectedBatch?.batch_id}.`,
-                  'Summarize chain-wide POS gross sales vs net bank credits and total recoverable fee leakage across all branches.',
+                  'Summarize chain-wide POS gross sales vs net bank credits and total recoverable Bank Card Commission Overcharges across all branches.',
                   `Verify whether the SAP General Ledger journal for ${selectedBatch?.store_name} is 100% balanced.`,
                 ].map((p) => (
                   <button
@@ -911,7 +917,7 @@ export default function App() {
                 <div className="flex items-center gap-2">
                   <Bot className="w-5 h-5 text-blue-600" />
                   <span className="text-sm font-extrabold text-slate-900">
-                    Interactive 4-Way Settlement Audit Session
+                    Interactive 4-Way Settlement &amp; Bank Commission Audit Session
                   </span>
                 </div>
                 <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
@@ -945,7 +951,7 @@ export default function App() {
                 ))}
                 {asking && (
                   <div className="text-xs text-slate-500 italic">
-                    Auditing store POS Z-Report, Daraja CSV, and Acquirer MDR settlement...
+                    Auditing store POS Z-Report, Daraja CSV, and Bank Card Commission settlement...
                   </div>
                 )}
               </div>
@@ -961,7 +967,7 @@ export default function App() {
                   type="text"
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="Ask about MDR fee overcharges, M-Pesa reversals, T+1 cutoffs, or GL entries..."
+                  placeholder="Ask about Bank Card Commission Overcharges, M-Pesa reversals, T+1 cutoffs, or GL entries..."
                   className="flex-1 px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:border-blue-600 outline-none"
                 />
                 <button
@@ -1054,7 +1060,7 @@ export default function App() {
               {/* Section 1: 4-Way Tender Summary */}
               <div>
                 <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">
-                  Section 1 — 4-Way Tender Reconciliation Summary (KES)
+                  Section 1 — 4-Way Store Tender Match &amp; Bank Card Commission Summary (KES)
                 </h3>
                 <table className="w-full text-left border-collapse border border-slate-200 text-xs">
                   <thead>
@@ -1062,8 +1068,8 @@ export default function App() {
                       <th className="py-2 px-3">Tender Stream</th>
                       <th className="py-2 px-3 text-right">POS Z-Report Gross</th>
                       <th className="py-2 px-3 text-right">Provider Gross</th>
-                      <th className="py-2 px-3 text-right">Contracted Fee</th>
-                      <th className="py-2 px-3 text-right">MDR Overcharge</th>
+                      <th className="py-2 px-3 text-right">Agreed Bank Commission</th>
+                      <th className="py-2 px-3 text-right">Bank Commission Overcharge Claim</th>
                       <th className="py-2 px-3 text-right">Actual Bank Credit</th>
                     </tr>
                   </thead>
@@ -1181,7 +1187,7 @@ export default function App() {
                   <div className="font-bold text-slate-900 mt-1">
                     Agent #07 (Zero Unexplained Residual)
                   </div>
-                  <div className="text-slate-500 text-[11px]">MDR &amp; Daraja Audit Verified</div>
+                  <div className="text-slate-500 text-[11px]">Bank Card Commission &amp; Daraja Verified</div>
                 </div>
                 <div>
                   <div className="text-slate-400 font-bold uppercase text-[10px]">
