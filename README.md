@@ -19,5 +19,5 @@ Retailers operating multi-branch supermarkets, hypermarkets, and department stor
 - **One-Click Daily Treasury Sign-Off & SAP GL Posting**: Generates a 100% balanced General Ledger journal and a print-ready **1-Page Store Tender Reconciliation & GL Posting Certificate**.
 
 ## Architecture
-- **Backend**: Python FastAPI (`backend/main.py`, `backend/seed_data.py`, `backend/auth_service.py`) + Vertex AI `gemini-2.5-flash` Co-Pilot with deterministic fallback.
+- **Backend**: Python FastAPI (`backend/main.py`, `backend/seed_data.py`, `backend/auth_service.py`) + Enterprise Operations Reasoning Engine Co-Pilot with deterministic fallback.
 - **Frontend**: React 18 + Vite + Tailwind CSS + Lucide Icons (`frontend/src/App.jsx`, `frontend/src/components/SignInPage.jsx`).

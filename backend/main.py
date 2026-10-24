@@ -635,7 +635,7 @@ def ask_treasury_copilot(payload: AgentAskPayload):
                 clean_text = resp.text.replace("MDR", "Bank Card Commission")
                 return {
                     "answer": clean_text,
-                    "engine": "vertex-ai-gemini-2.5-flash",
+                    "engine": "Enterprise Operations Reasoning Engine",
                     "batch_id": target_batch["batch_id"] if target_batch else None,
                 }
         except Exception:

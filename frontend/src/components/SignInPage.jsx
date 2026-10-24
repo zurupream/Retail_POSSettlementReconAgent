@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ThemeSwitcher from './ThemeSwitcher';
 import {
   ShieldCheck,
   Smartphone,
@@ -163,6 +164,7 @@ export default function SignInPage({ onSuccess }) {
       <header className="border-b border-slate-200 bg-white/90 backdrop-blur sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold shadow-sm">
               <Landmark className="w-5 h-5 text-emerald-400" />
             </div>
@@ -190,6 +192,8 @@ export default function SignInPage({ onSuccess }) {
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-indigo-600" /> Enterprise SSO Protected
             </span>
+          </div>
+            <ThemeSwitcher />
           </div>
         </div>
       </header>

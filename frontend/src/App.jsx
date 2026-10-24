@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SignInPage from './components/SignInPage';
+import ThemeSwitcher from './components/ThemeSwitcher';
 import {
   Landmark,
   Store,
@@ -258,6 +259,7 @@ export default function App() {
             </div>
             <div>
               <div className="flex items-center gap-2">
+            <ThemeSwitcher />
                 <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                   Agent #07 • Retail Treasury Suite
                 </span>
@@ -876,7 +878,7 @@ export default function App() {
                     Retail Treasury AI Co-Pilot
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Vertex AI Gemini 2.5 Flash + Deterministic Audit Fallback
+                    Enterprise Operations Reasoning Engine + Deterministic Audit
                   </p>
                 </div>
               </div>
